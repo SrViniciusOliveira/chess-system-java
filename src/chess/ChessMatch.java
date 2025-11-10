@@ -16,6 +16,7 @@ public class ChessMatch {
 	private Color currentPlayer;
 	private Board board;
 	private boolean check;
+	private boolean checkMate;
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -37,6 +38,10 @@ public class ChessMatch {
 	
 	public boolean getCheck() {
 		return check;
+	}
+	
+	public boolean getCheckMate() {
+		return checkMate;
 	}
 	
 	public ChessPiece[][] getPieces(){
@@ -64,7 +69,7 @@ public class ChessMatch {
 		
 		if(testCheck(currentPlayer)) {
 			undoMove(source, target, capturedPiece);
-			throw new ChessException("You can't put yourself n check");
+			throw new ChessException("You can't put yourself in check");
 		}
 		
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
@@ -77,7 +82,8 @@ public class ChessMatch {
 	private Piece makeMove(Position source, Position target) {
 		Piece p = board.removePiece(source);
 		Piece capturedPiece = board.removePiece(target);
-		board.placePiece(p, source);
+		board.placePiece(p, target);
+		piecesOnTheBoard.add(p);
 		
 		if(capturedPiece != null) {
 			piecesOnTheBoard.remove(capturedPiece);
@@ -105,7 +111,7 @@ public class ChessMatch {
 		if(currentPlayer != ((ChessPiece)board.piece(position)).getColor()) {
 			throw new ChessException("The chosen piece is not yours");
 		}
-		if(!board.piece(position).isThereAnyPossivleMove()) {	
+		if(!board.piece(position).isThereAnyPossibleMove()) {	
 			throw new ChessException("There is no possible moves for the chosen piece");
 		}
 	}
@@ -154,9 +160,14 @@ public class ChessMatch {
 	}
 	
 	private void initialSetup() {
-		placeNewPiece('b', 6 ,new Rook(board, Color.WHITE));
-		placeNewPiece('e', 8,new King(board, Color.BLACK));
+		placeNewPiece('h', 7 ,new Rook(board, Color.WHITE));
+		placeNewPiece('d', 1 ,new Rook(board, Color.WHITE));
 		placeNewPiece('e', 1,new King(board, Color.WHITE));
+		
+		placeNewPiece('b', 8 ,new Rook(board, Color.BLACK));
+		placeNewPiece('a', 8,new King(board, Color.BLACK));
 	}
+	
+	
 
 }
